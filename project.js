@@ -1,10 +1,12 @@
 const path = require('path');
 const fs = require('fs');
 const git = require('simple-git')();
+var cmd = require('node-cmd');
 
 const secrets = require('./secrets.json');
 const repositories = require('./repositories.json');
 const directories = require('./directories.json');
+const iisSettings = require('./iis-settings.json');
 
 const branches = ['dev', 'qa'];
 
@@ -20,10 +22,20 @@ switch (args[0]) {
     case 'mklinks':
         createModulesSymlinks();
         break;
+    case 'restart-iis':
+        recycleApplicationPool();
+        break;
     default:
-        console.log('You should use args: init, pull, mklinks');
+        console.log('You should use args: init, pull, mklinks, restart-iis commands');
     }
 return;
+
+/**
+ * Recycle iis application pool. Faster then `iis reset` command.
+ */
+function recycleApplicationPool() {
+    cmd.run(`${iisSettings.appcmdPath} recycle apppool /apppool.name:"${iisSettings.apppool}"`);
+}
 
 /**
  * Clone repositories configured in 'repositories.json'.

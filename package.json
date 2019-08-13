@@ -6,11 +6,13 @@
   "scripts": {
     "init": "node project.js init",
     "update": "node project.js update",
-    "mklinks": "node project.js mklinks"
+    "mklinks": "node project.js mklinks",
+    "restart-iis": "node project.js restart-iis"
   },
   "author": "Vitaly.Tartynov",
   "license": "",
   "dependencies": {
+    "node-cmd": "^3.0.0",
     "simple-git": "^1.124.0"
   }
 }
