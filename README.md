@@ -1,5 +1,5 @@
 # VirtoCommerce-InitProject
-Simple tool for automate developing process
+Simple tool for automate developing process. This tool automate clone, update and make symlinks for our virtocommerce modules/storefront/theme.
 
 ## Usage
 1. Run `npm install`;
