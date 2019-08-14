@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const git = require('simple-git')();
 var shell = require('shelljs');
+const chalk = require('chalk');
 
 const secrets = require('./secrets.json');
 const repositories = require('./repositories.json');
@@ -45,8 +46,12 @@ function buildAllModules() {
 function buildModule(repository) {
     const repositoryPath = getRepositoryPath(repository);
             
-    const restoreResult = shell.exec(`${buildSettings.nugetPath} restore ${repositoryPath}`, {silent:true}).code === 0 ? 'Ok' : 'Fail';
-    const buildResult = shell.exec(`"${buildSettings.msbuildPath}" ${repositoryPath}`, {silent:true}).code === 0 ? 'Ok' : 'Fail';
+    const restoreResult = shell.exec(`${buildSettings.nugetPath} restore ${repositoryPath}`, {silent:true}).code === 0 
+        ? chalk.green('Ok') 
+        : chalk.red('Fail');
+    const buildResult = shell.exec(`"${buildSettings.msbuildPath}" ${repositoryPath}`, {silent:true}).code === 0 
+        ? chalk.green('Ok') 
+        : chalk.red('Fail');
     console.log(`'${repository.name}' - restore packages: ${restoreResult}, build: ${buildResult}`);
 }
 
@@ -65,7 +70,7 @@ function cloneAllRepositories() {
     repositories.forEach(repository => {
         let destinationPath = getRepositoryPath(repository);
         if (fs.existsSync(destinationPath)) {
-            console.log(`Repository '${repository.name}' exists in '${destinationPath}'.`);            
+            console.log(`'${chalk.green(repository.name)}' already exists in '${destinationPath}'.`);            
         } else {
             cloneRepository(repository, secrets, destinationPath); 
         }

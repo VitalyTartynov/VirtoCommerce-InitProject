@@ -13,6 +13,7 @@
   "author": "Vitaly.Tartynov",
   "license": "",
   "dependencies": {
+    "chalk": "^2.4.2",
     "shelljs": "^0.8.3",
     "simple-git": "^1.124.0"
   }
