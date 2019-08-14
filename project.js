@@ -1,12 +1,13 @@
 const path = require('path');
 const fs = require('fs');
 const git = require('simple-git')();
-var cmd = require('node-cmd');
+var shell = require('shelljs');
 
 const secrets = require('./secrets.json');
 const repositories = require('./repositories.json');
 const directories = require('./directories.json');
 const iisSettings = require('./iis-settings.json');
+const buildSettings = require('./build-settings.json');
 
 const branches = ['dev', 'qa'];
 
@@ -25,16 +26,35 @@ switch (args[0]) {
     case 'restart-iis':
         recycleApplicationPool();
         break;
+    case 'build-modules':
+        buildAllModules();
+        break;
     default:
-        console.log('You should use args: init, pull, mklinks, restart-iis commands');
+        console.log('You should use args: init, pull, mklinks, restart-iis, build-modules commands');
     }
 return;
+
+function buildAllModules() {
+    repositories.forEach(repository => {
+        if (repository.type === 'module') {
+            buildModule(repository);
+        }
+    });
+}
+
+function buildModule(repository) {
+    const repositoryPath = getRepositoryPath(repository);
+            
+    const restoreResult = shell.exec(`${buildSettings.nugetPath} restore ${repositoryPath}`, {silent:true}).code === 0 ? 'Ok' : 'Fail';
+    const buildResult = shell.exec(`"${buildSettings.msbuildPath}" ${repositoryPath}`, {silent:true}).code === 0 ? 'Ok' : 'Fail';
+    console.log(`'${repository.name}' - restore packages: ${restoreResult}, build: ${buildResult}`);
+}
 
 /**
  * Recycle iis application pool. Faster then `iis reset` command.
  */
 function recycleApplicationPool() {
-    cmd.run(`${iisSettings.appcmdPath} recycle apppool /apppool.name:"${iisSettings.apppool}"`);
+    shell.exec(`${iisSettings.appcmdPath} recycle apppool /apppool.name:"${iisSettings.apppool}"`);
 }
 
 /**

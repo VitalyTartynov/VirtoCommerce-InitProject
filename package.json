@@ -7,12 +7,13 @@
     "init": "node project.js init",
     "update": "node project.js update",
     "mklinks": "node project.js mklinks",
-    "restart-iis": "node project.js restart-iis"
+    "restart-iis": "node project.js restart-iis",
+    "build-modules": "node project.js build-modules"
   },
   "author": "Vitaly.Tartynov",
   "license": "",
   "dependencies": {
-    "node-cmd": "^3.0.0",
+    "shelljs": "^0.8.3",
     "simple-git": "^1.124.0"
   }
 }
