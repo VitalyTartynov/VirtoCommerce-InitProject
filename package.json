@@ -8,13 +8,18 @@
     "update": "node project.js update",
     "mklinks": "node project.js mklinks",
     "restart-iis": "node project.js restart-iis",
-    "build-modules": "node project.js build-modules"
+    "build-modules": "node project.js build-modules",
+    "lint": "eslint"
   },
   "author": "Vitaly.Tartynov",
   "license": "",
   "dependencies": {
     "chalk": "^2.4.2",
+    "dotenv": "^8.0.0",
     "shelljs": "^0.8.3",
     "simple-git": "^1.124.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.1.0"
   }
 }

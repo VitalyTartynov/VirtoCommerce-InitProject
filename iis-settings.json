@@ -1,4 +1,0 @@
-{
-    "appcmdPath": "%SYSTEMROOT%\\System32\\inetsrv\\appcmd",
-    "apppool": "your application pool name here"
-}

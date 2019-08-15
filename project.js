@@ -1,18 +1,14 @@
 const path = require('path');
 const fs = require('fs');
 const git = require('simple-git')();
-var shell = require('shelljs');
+const shell = require('shelljs');
 const chalk = require('chalk');
 
-const secrets = require('./secrets.json');
-const repositories = require('./repositories.json');
-const directories = require('./directories.json');
-const iisSettings = require('./iis-settings.json');
-const buildSettings = require('./build-settings.json');
+// ENVIRONMENT should be configured in '.env' file.
+require('dotenv').config();
+const config = require(`./config.${process.env.ENVIRONMENT}.json`);
 
-const branches = ['dev', 'qa'];
-
-var args = process.argv.slice(2);
+const args = process.argv.slice(2);
 
 switch (args[0]) {
     case 'init':
@@ -32,11 +28,15 @@ switch (args[0]) {
         break;
     default:
         console.log('You should use args: init, pull, mklinks, restart-iis, build-modules commands');
-    }
+}
 return;
 
+/**
+
+* Build all .NET module projects on current branch.
+ */
 function buildAllModules() {
-    repositories.forEach(repository => {
+    config.repositories.forEach(repository => {
         if (repository.type === 'module') {
             buildModule(repository);
         }
@@ -46,10 +46,10 @@ function buildAllModules() {
 function buildModule(repository) {
     const repositoryPath = getRepositoryPath(repository);
             
-    const restoreResult = shell.exec(`${buildSettings.nugetPath} restore ${repositoryPath}`, {silent:true}).code === 0 
+    const restoreResult = shell.exec(`${config.build.nugetPath} restore ${repositoryPath}`, {silent:true}).code === 0 
         ? chalk.green('Ok') 
         : chalk.red('Fail');
-    const buildResult = shell.exec(`"${buildSettings.msbuildPath}" ${repositoryPath}`, {silent:true}).code === 0 
+    const buildResult = shell.exec(`"${config.build.msbuildPath}" ${repositoryPath}`, {silent:true}).code === 0 
         ? chalk.green('Ok') 
         : chalk.red('Fail');
     console.log(`'${repository.name}' - restore packages: ${restoreResult}, build: ${buildResult}`);
@@ -59,7 +59,7 @@ function buildModule(repository) {
  * Recycle iis application pool. Faster then `iis reset` command.
  */
 function recycleApplicationPool() {
-    shell.exec(`${iisSettings.appcmdPath} recycle apppool /apppool.name:"${iisSettings.apppool}"`);
+    shell.exec(`${config.iis.appcmdPath} recycle apppool /apppool.name:"${config.iis.apppool}"`);
 }
 
 /**
@@ -67,12 +67,12 @@ function recycleApplicationPool() {
  * If exists - skip.
  */
 function cloneAllRepositories() {
-    repositories.forEach(repository => {
+    config.repositories.forEach(repository => {
         let destinationPath = getRepositoryPath(repository);
         if (fs.existsSync(destinationPath)) {
-            console.log(`'${chalk.green(repository.name)}' already exists in '${destinationPath}'.`);            
+            console.log(`'${chalk.green(repository.name)}' already exists in '${destinationPath}'.`);
         } else {
-            cloneRepository(repository, secrets, destinationPath); 
+            cloneRepository(repository, destinationPath); 
         }
     });
 }
@@ -82,10 +82,10 @@ function cloneAllRepositories() {
  * If not exists - skip.
  */
 function updateAllRepositories() {
-    repositories.forEach(repository => {
+    config.repositories.forEach(repository => {
         let destinationPath = getRepositoryPath(repository);
         if (fs.existsSync(destinationPath)) {
-            pullRepository(destinationPath, branches);
+            pullRepository(destinationPath, config.branch.all);
         } else {
             console.log(`Repository '${repository.name}' not cloned.`);
         }
@@ -97,7 +97,7 @@ function updateAllRepositories() {
  * Should be executed with admin permissions!
  */
 function createModulesSymlinks() {
-    repositories.forEach(repository => {
+    config.repositories.forEach(repository => {
         if (repository.type === 'module') {
             createSymlink(repository);
         }
@@ -114,7 +114,7 @@ function createSymlink(repository) {
     const target = path.join(repositoryPath, webDirs[0]);
     console.log(target);
         
-    fs.symlinkSync(target, getLinkPath(directories.platformModulesRoot, repository.name));
+    fs.symlinkSync(target, getLinkPath(config.directories.platformModulesRoot, repository.name));
 }
 
 function getLinkPath(modulesRoot, moduleName) {
@@ -122,21 +122,21 @@ function getLinkPath(modulesRoot, moduleName) {
 }
 
 function getRepositoryPath(repository) {
-    return path.join(directories.repositoriesRoot, repository.name);
+    return path.join(config.directories.repositoriesRoot, repository.name);
 }
 
-function getRepositoryUrl(repositoryUrl, secrets) {
+function getRepositoryUrl(repositoryUrl) {
     let url = new URL(repositoryUrl);
-    url.username = secrets.username;
-    url.password = secrets.password;
+    url.username = process.env.USERNAME;
+    url.password = process.env.PASSWORD;
 
     return url.href;
 }
 
-function cloneRepository(repository, secrets, destinationPath) {
+function cloneRepository(repository, destinationPath) {
     console.log(`Starting clone '${repository.name}' to '${destinationPath}'`);
     
-    const repositoryUrl = getRepositoryUrl(repository.url, secrets);
+    const repositoryUrl = getRepositoryUrl(repository.url);
 
     return git.clone(repositoryUrl, destinationPath, () => {
         console.log(`Finished clone '${repository.name}'`);
@@ -146,7 +146,7 @@ function cloneRepository(repository, secrets, destinationPath) {
 function pullRepository(repositoryPath, branches) {
     git.cwd(repositoryPath);
     branches.forEach(branch => {
-        console.log(`Starting pull '${branch}' in '${repositoryPath}'`)
+        console.log(`Starting pull '${branch}' in '${repositoryPath}'`);
         git.pull('origin', branch, () => {
             console.log(`Finished pull '${branch}' in '${repositoryPath}'`);
         }); 

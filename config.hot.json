@@ -1,0 +1,130 @@
+{
+    "directories": {
+        "repositoriesRoot": "c:\\Repos\\HOT\\",
+        "platformModulesRoot": "c:\\Repos\\HOT\\hot-platform\\hot-platform-dev\\Modules\\"
+    },
+
+    "build": {
+        "msbuildPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin\\msbuild.exe",
+        "nugetPath": ".\\bins\\nuget.exe"
+    },
+
+    "iis": {
+        "appcmdPath": "%SYSTEMROOT%\\System32\\inetsrv\\appcmd",
+        "apppool": "HOT"
+    },
+
+    "branch": {
+        "development": "dev",
+        "release": "qa",
+        "all": ["dev", "qa"]
+    },
+
+    "repositories": [
+        {
+            "name": "hot-theme",
+            "type": "theme",
+            "url": "https://github.com/heineken-order-transfer/hot-theme"
+        },
+        {
+            "name": "hot-storefront-core",
+            "type": "storefront",
+            "url": "https://github.com/heineken-order-transfer/hot-storefront-core"
+        },
+        {
+            "name": "hot-module-sms-providers",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-sms-providers"
+        },
+        {
+            "name": "hot-module-marketing",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-marketing"
+        },
+        {
+            "name": "hot-module-order",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-order"
+        },
+        {
+            "name": "hot-module-taxes",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-taxes"
+        },
+        {
+            "name": "hot-module-holidays",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-holidays"
+        },
+        {
+            "name": "hot-module-core",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-core"
+        },
+        {
+            "name": "hot-module-pricing",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-pricing"
+        },
+        {
+            "name": "hot-module-loyalty",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-loyalty"
+        },
+        {
+            "name": "hot-module-inventory",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-inventory"
+        },
+        {
+            "name": "hot-module-catalog",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-catalog"
+        },
+        {
+            "name": "hot-module-customers",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-customers"
+        },
+        {
+            "name": "hot-module-cart",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-cart"
+        },
+        {
+            "name": "hot-module-integration",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-integration"
+        },
+        {
+            "name": "hot-module-helpdesk",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-helpdesk"
+        },
+        {
+            "name": "hot-module-store",
+            "type": "module",
+            "url": "https://github.com/heineken-order-transfer/hot-module-store"
+        },
+        {
+            "name": "hot-features",
+            "type": "common",
+            "url": "https://github.com/heineken-order-transfer/hot-features"
+        },
+        {
+            "name": "hot-modules",
+            "type": "common",
+            "url": "https://github.com/heineken-order-transfer/hot-modules"
+        },
+        {
+            "name": "hot-settings",
+            "type": "common",
+            "url": "https://github.com/heineken-order-transfer/hot-settings"
+        },
+        {
+            "name": "hot-module-template",
+            "type": "common",
+            "url": "https://github.com/heineken-order-transfer/hot-module-template"
+        }
+    ]
+}
